@@ -9,6 +9,14 @@ public class Cipher {
             'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ',
             'ъ', 'ы', 'ь', 'э', 'ю', 'я', '.', ',', '«', '»', '"', '\'', ':', '!', '?', ' '};
 
+    private Map<Character, Character> encryptCharMapping;
+    private Map<Character, Character> decryptCharMapping;
+
+    public Cipher(int key) {
+        this.encryptCharMapping = createCharMapping(ALPHABET, key);
+        this.decryptCharMapping = createCharMapping(ALPHABET, -key);
+    }
+
     private Map<Character, Character> createCharMapping(char[] charArray, int shift) {
         Map<Character, Character> charMapping = new HashMap<>();
         if (shift < 0) {
@@ -28,5 +36,11 @@ public class Cipher {
         return charMapping;
     }
 
+    public char encrypt(char symbol) {
+        return encryptCharMapping.get(symbol);
+    }
 
+    public char decrypt(char symbol) {
+        return decryptCharMapping.get(symbol);
+    }
 }
