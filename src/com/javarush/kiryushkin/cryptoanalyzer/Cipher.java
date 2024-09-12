@@ -13,7 +13,7 @@ public class Cipher {
         Map<Character, Character> charMapping = new HashMap<>();
         if (shift < 0) {
             shift = -shift;
-            Character temp;
+            char temp;
             for (int i = 0; i < charArray.length / 2; i++) {
                 temp = charArray[charArray.length - 1 - i];
                 charArray[charArray.length - 1 - i] = charArray[i];
@@ -21,8 +21,12 @@ public class Cipher {
             }
         }
         for (int i = 0; i < charArray.length; i++) {
-            charMapping.put(charArray[i], charArray[(i + shift) % charArray.length]);
+            Character key = charArray[i];
+            Character value = charArray[(i + shift) % charArray.length];
+            charMapping.put(key, value);
         }
         return charMapping;
     }
+
+
 }
