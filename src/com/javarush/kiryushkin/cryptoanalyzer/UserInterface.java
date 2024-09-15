@@ -40,15 +40,16 @@ public class UserInterface {
         String fileName = scanner.nextLine();
         if (fileName.equals("0")) {
             begin();
-        }
-        try {
-            validator.validateForWrite(fileName);
-        } catch (InvalidPathException exception) {
-            System.out.println(WRONG_FILE_NAME);
-            encryptFileDialog();
-        } catch (AccessDeniedException exception) {
-            System.out.println(ACCESS_DENIED);
-            encryptFileDialog();
+        } else {
+            try {
+                validator.validateForWrite(fileName);
+            } catch (InvalidPathException exception) {
+                System.out.println(WRONG_FILE_NAME);
+                encryptFileDialog();
+            } catch (AccessDeniedException exception) {
+                System.out.println(ACCESS_DENIED);
+                encryptFileDialog();
+            }
         }
         //TODO: прописать запуск метода шифрования
     }
