@@ -5,9 +5,9 @@ import java.nio.file.*;
 public class Validator {
 
     private static final String[] NOT_ALLOWED_NAMES = new String[]{
-            "Windows",
-            "Program Files",
-            "ProgramData",
+            "windows",
+            "program files",
+            "programdata",
             ".bash_history",
             ".bash_profile",
             "etc",
@@ -19,10 +19,10 @@ public class Validator {
             "usr",
             "var"
     };
-    private static final String FILE_SEPARATOR = FileSystems.getDefault().getSeparator();
+    private static final String FILE_SEPARATOR = "[\\\\/]";
 
     private Path validatePath(String filename) throws InvalidPathException, AccessDeniedException {
-
+        filename = filename.toLowerCase();
         for (String pathPart : filename.split(FILE_SEPARATOR)) {
             for (String notAllowedName : NOT_ALLOWED_NAMES) {
                 if (notAllowedName.equals(pathPart)) {
@@ -30,16 +30,12 @@ public class Validator {
                 }
             }
         }
-        Path path = Paths.get(filename);
-        return path;
+        return Paths.get(filename);
     }
 
     public void validateForWrite(String filename) throws InvalidPathException, AccessDeniedException {
         Path path = validatePath(filename);
-        if (Files.notExists(path)) {
-            throw new InvalidPathException(filename, "");
-        }
-        if (Files.isDirectory(path)) {
+        if (Files.notExists(path) || Files.isDirectory(path)) {
             throw new InvalidPathException(filename, "");
         }
         if (!Files.isReadable(path)) {

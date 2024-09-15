@@ -10,7 +10,7 @@ public class UserInterface {
     private final String ENCRYPT_FILE = "1. Зашифровать файл";
     private final String EXIT = "0. Выход из программы";
     private final String WRONG_OPERATION = "Неверный номер операции. Попробуйте ещё раз.";
-    private final String INPUT_FILE_NAME = "Введите имя файла:";
+    private final String INPUT_FILE_NAME = "Введите имя файла или \"0\" для выхода в меню:";
     private final String WRONG_FILE_NAME = "Файла с таким именем не существует, или это директория";
     private final String ACCESS_DENIED = "Директория или файл защищены от чтения и записи";
 
@@ -35,14 +35,19 @@ public class UserInterface {
 
     public void encryptFileDialog() {
         System.out.println(INPUT_FILE_NAME);
-        FileHandler fileHandler = new FileHandler();
+        Scanner scanner = new Scanner(System.in);
+        Validator validator = new Validator();
+        String fileName = scanner.nextLine();
+        if (fileName.equals("0")) {
+            begin();
+        }
         try {
-            fileHandler.readFileName();
+            validator.validateForWrite(fileName);
         } catch (InvalidPathException exception) {
             System.out.println(WRONG_FILE_NAME);
+            encryptFileDialog();
         } catch (AccessDeniedException exception) {
             System.out.println(ACCESS_DENIED);
-        } finally {
             encryptFileDialog();
         }
         //TODO: прописать запуск метода шифрования
