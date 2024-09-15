@@ -2,6 +2,7 @@ package com.javarush.kiryushkin.cryptoanalyzer;
 
 import java.nio.file.AccessDeniedException;
 import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.util.Scanner;
 
 public class UserInterface {
@@ -42,7 +43,7 @@ public class UserInterface {
             begin();
         } else {
             try {
-                validator.validateForWrite(fileName);
+                Path pathToFile = validator.validateForWrite(fileName);
             } catch (InvalidPathException exception) {
                 System.out.println(WRONG_FILE_NAME);
                 encryptFileDialog();
