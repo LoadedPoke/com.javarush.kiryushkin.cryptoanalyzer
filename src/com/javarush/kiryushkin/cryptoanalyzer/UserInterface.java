@@ -34,25 +34,28 @@ public class UserInterface {
         }
     }
 
-    public void encryptFileDialog() {
+    private void encryptFileDialog() {
         System.out.println(INPUT_FILE_NAME);
         Scanner scanner = new Scanner(System.in);
-        Validator validator = new Validator();
-        String fileName = scanner.nextLine();
-        if (fileName.equals("0")) {
+        String filename = scanner.nextLine();
+        if (filename.equals("0")) {
             begin();
         } else {
-            try {
-                Path pathToFile = validator.validateForWrite(fileName);
-            } catch (InvalidPathException exception) {
-                System.out.println(WRONG_FILE_NAME);
-                encryptFileDialog();
-            } catch (AccessDeniedException exception) {
-                System.out.println(ACCESS_DENIED);
-                encryptFileDialog();
-            }
+            validatePathToFile(filename);
         }
         //TODO: прописать запуск метода шифрования
     }
 
+    private void validatePathToFile(String filename) {
+        Validator validator = new Validator();
+        try {
+            validator.validateForWrite(filename);
+        } catch (InvalidPathException exception) {
+            System.out.println(WRONG_FILE_NAME);
+            encryptFileDialog();
+        } catch (AccessDeniedException exception) {
+            System.out.println(ACCESS_DENIED);
+            encryptFileDialog();
+        }
+    }
 }

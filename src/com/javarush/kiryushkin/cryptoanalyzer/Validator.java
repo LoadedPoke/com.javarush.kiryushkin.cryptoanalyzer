@@ -22,8 +22,7 @@ public class Validator {
     private static final String FILE_SEPARATOR = "[\\\\/]";
 
     private Path validatePath(String filename) throws InvalidPathException, AccessDeniedException {
-        filename = filename.toLowerCase();
-        for (String pathPart : filename.split(FILE_SEPARATOR)) {
+        for (String pathPart : filename.toLowerCase().split(FILE_SEPARATOR)) {
             for (String notAllowedName : NOT_ALLOWED_NAMES) {
                 if (notAllowedName.equals(pathPart)) {
                     throw new AccessDeniedException(filename);
@@ -33,7 +32,7 @@ public class Validator {
         return Paths.get(filename);
     }
 
-    public Path validateForWrite(String filename) throws InvalidPathException, AccessDeniedException {
+    public void validateForWrite(String filename) throws InvalidPathException, AccessDeniedException {
         Path path = validatePath(filename);
         if (Files.notExists(path) || Files.isDirectory(path)) {
             throw new InvalidPathException(filename, "");
@@ -41,6 +40,5 @@ public class Validator {
         if (!Files.isReadable(path)) {
             throw new AccessDeniedException(filename);
         }
-        return path;
     }
 }
