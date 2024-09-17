@@ -14,48 +14,76 @@ public class UserInterface {
     private final String INPUT_FILE_NAME = "Введите имя файла или \"0\" для выхода в меню:";
     private final String WRONG_FILE_NAME = "Файла с таким именем не существует, или это директория";
     private final String ACCESS_DENIED = "Директория или файл защищены от чтения и записи";
+    private final String INPUT_KEY = "Введите ключ - целое число или \"0\" для выхода в меню:";
+    private final String WRONG_KEY = "Ключ должен быть числом.";
+
+    Scanner scanner = new Scanner(System.in);
+    Validator validator = new Validator();
+
 
     public void begin() {
-        System.out.println(WELCOME);
-        System.out.println(ENCRYPT_FILE);
-        System.out.println(EXIT);
-
-        Scanner scanner = new Scanner(System.in);
-        String operation = scanner.nextLine();
-        switch (operation) {
-            case "1":
-                encryptFileDialog();
-                break;
-            case "0":
-                return;
-            default:
-                System.out.println(WRONG_OPERATION);
-                begin();
+        boolean isOperationValid = false;
+        while (!isOperationValid) {
+            System.out.println(WELCOME);
+            System.out.println(ENCRYPT_FILE);
+            System.out.println(EXIT);
+            String operation = scanner.nextLine();
+            isOperationValid = true;
+            switch (operation) {
+                case "1":
+                    encryptFileDialog();
+                    break;
+                case "0":
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println(WRONG_OPERATION);
+                    isOperationValid = false;
+            }
         }
     }
 
     private void encryptFileDialog() {
-        System.out.println(INPUT_FILE_NAME);
-        Scanner scanner = new Scanner(System.in);
-        String filename = scanner.nextLine();
-        if (filename.equals("0")) {
-            begin();
-        } else {
-            validatePathToFile(filename);
+        boolean isPathValid = false;
+        while (!isPathValid) {
+            isPathValid = true;
+            System.out.println(INPUT_FILE_NAME);
+            String filename = scanner.nextLine();
+            if (filename.equals("0")) {
+                begin();
+            } else {
+                try {
+                    validator.validateForWrite(filename);
+                } catch (InvalidPathException exception) {
+                    System.out.println(WRONG_FILE_NAME);
+                    isPathValid = false;
+                } catch (AccessDeniedException exception) {
+                    System.out.println(ACCESS_DENIED);
+                    isPathValid = false;
+                }
+            }
         }
+        int key = inputKey();
         //TODO: прописать запуск метода шифрования
     }
 
-    private void validatePathToFile(String filename) {
-        Validator validator = new Validator();
-        try {
-            validator.validateForWrite(filename);
-        } catch (InvalidPathException exception) {
-            System.out.println(WRONG_FILE_NAME);
-            encryptFileDialog();
-        } catch (AccessDeniedException exception) {
-            System.out.println(ACCESS_DENIED);
-            encryptFileDialog();
+    private int inputKey() {
+        int key = 0;
+        boolean isKeyValid = false;
+        while (!isKeyValid) {
+            isKeyValid = true;
+            System.out.println(INPUT_KEY);
+            String keyString = scanner.nextLine();
+            try {
+                key = Integer.parseInt(keyString);
+            } catch (NumberFormatException exception) {
+                System.out.println(WRONG_KEY);
+                isKeyValid = false;
+            }
         }
+        if (key == 0) {
+            begin();
+        }
+        return key;
     }
 }
