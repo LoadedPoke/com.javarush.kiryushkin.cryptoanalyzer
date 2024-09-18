@@ -11,10 +11,14 @@ public class Cipher {
             '.', ',', '«', '»', '"', '\'', '/', ':', '!', '?', ' ',
             '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
 
-    private Map<Character, Character> сharMapping;
+    private Map<Character, Character> charMapping;
 
     public Cipher(int key) {
-        this.сharMapping = createCharMapping(ALPHABET, key);
+        this.charMapping = createCharMapping(ALPHABET, key);
+    }
+
+    public Map<Character, Character> getCharMapping() {
+        return charMapping;
     }
 
     private Map<Character, Character> createCharMapping(char[] charArray, int shift) {
@@ -31,7 +35,6 @@ public class Cipher {
     }
 
     public char encrypt(char symbol) {
-        return сharMapping.get(symbol);
+        return charMapping.get(symbol);
     }
-
 }

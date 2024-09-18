@@ -19,7 +19,7 @@ public class Validator {
             "usr",
             "var"
     };
-    private static final String FILE_SEPARATOR = "[\\\\/]";
+    private static final String FILE_SEPARATOR = "[\\\\/]+";
 
     private Path validatePath(String filename) throws InvalidPathException, AccessDeniedException {
         for (String pathPart : filename.toLowerCase().split(FILE_SEPARATOR)) {
