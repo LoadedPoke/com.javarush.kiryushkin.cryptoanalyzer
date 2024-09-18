@@ -18,10 +18,11 @@ public class UserInterface {
     private final String INPUT_FILE_NAME_FOR_WRITING = "Введите имя файла для записи или \"0\" для выхода в меню:";
     private final String CREATE_NEW_FILE = "Файла с именем %s не существует. Создать файл? y/n.\n";
     private final String CANT_CREATE_FILE = "Не удалось создать файл.";
+    private final String FILE_ENCRYPTED = "Файл зашифрован.";
 
     Scanner scanner = new Scanner(System.in);
     Validator validator = new Validator();
-
+    Encryptor encryptor = new Encryptor();
 
     public void begin() {
         boolean isOperationValid = false;
@@ -49,7 +50,14 @@ public class UserInterface {
         String fileNameForRead = inputFileForRead();
         int key = inputKey();
         String fileNameForWrite = inputFileForWrite();
-
+        try {
+            encryptor.encryptFile(fileNameForRead, fileNameForWrite, key);
+        } catch (IOException exception) {
+            System.out.println(CANT_CREATE_FILE);
+            exception.printStackTrace();
+        }
+        System.out.println(FILE_ENCRYPTED);
+        begin();
     }
 
     private String inputFileForRead() {

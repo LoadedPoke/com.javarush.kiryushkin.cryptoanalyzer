@@ -1,11 +1,18 @@
 package com.javarush.kiryushkin.cryptoanalyzer;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 public class Encryptor {
 
-    public void EncryptFile(String inputFilename, String outputFilename, int key) throws IOException {
+    public void encryptFile(String inputFilename, String outputFilename, int key) throws IOException {
+        Path pathToOutputFile = Paths.get(outputFilename);
+        if (Files.notExists(pathToOutputFile)) {
+            Files.createFile(pathToOutputFile);
+        }
         Cipher cipher = new Cipher(key);
         Map<Character, Character> charMapping = cipher.getCharMapping();
         try (BufferedReader bufferedReader = new BufferedReader(
@@ -14,15 +21,15 @@ public class Encryptor {
                      new FileWriter(outputFilename)))
         {
             int charAsInt;
-            while ((charAsInt = bufferedReader.read()) != 0) {
+            while ((charAsInt = bufferedReader.read()) != -1) {
                 char symbol = (char) charAsInt;
                 if (Character.toString(symbol).matches("\\s+")) {
                     symbol = ' ';
                 }
+                if (Character.isLetter(symbol) && Character.isUpperCase(symbol)) {
+                    symbol = Character.toLowerCase(symbol);
+                }
                 if (charMapping.containsKey(symbol)) {
-                    if (Character.isLetter(symbol) && Character.isUpperCase(symbol)) {
-                        symbol = Character.toLowerCase(symbol);
-                    }
                     bufferedWriter.write(charMapping.get(symbol));
                 }
             }
