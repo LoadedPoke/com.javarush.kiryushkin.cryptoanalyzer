@@ -32,12 +32,22 @@ public class Validator {
         return Paths.get(filename);
     }
 
-    public void validateForWrite(String filename) throws InvalidPathException, AccessDeniedException {
+    public void validateForRead(String filename) throws InvalidPathException, AccessDeniedException {
         Path path = validatePath(filename);
         if (Files.notExists(path) || Files.isDirectory(path)) {
             throw new InvalidPathException(filename, "");
         }
         if (!Files.isReadable(path)) {
+            throw new AccessDeniedException(filename);
+        }
+    }
+
+    public void validateForWrite(String filename) throws InvalidPathException, AccessDeniedException {
+        Path path = validatePath(filename);
+        if (Files.isDirectory(path)) {
+            throw new InvalidPathException(filename, "");
+        }
+        if (!Files.isWritable(path)) {
             throw new AccessDeniedException(filename);
         }
     }
