@@ -8,6 +8,7 @@ public class UserInterface {
 
     private final String WELCOME = "Введите номер операции:";
     private final String ENCRYPT_FILE = "1. Зашифровать файл";
+    private final String DECRYPT_FILE = "2. Расшифровать файл";
     private final String EXIT = "0. Выход из программы";
     private final String WRONG_OPERATION = "Неверный номер операции. Попробуйте ещё раз.";
     private final String INPUT_FILE_NAME_FOR_READING = "Введите имя файла для чтения или \"0\" для выхода в меню:";
@@ -19,6 +20,7 @@ public class UserInterface {
     private final String CREATE_NEW_FILE = "Файла с именем %s не существует. Создать файл? y/n.\n";
     private final String CANT_CREATE_FILE = "Не удалось создать файл.";
     private final String FILE_ENCRYPTED = "Файл зашифрован.";
+    private final String FILE_DECRYPTED = "Файл расшифрован";
 
     Scanner scanner = new Scanner(System.in);
     Validator validator = new Validator();
@@ -29,12 +31,16 @@ public class UserInterface {
         while (!isOperationValid) {
             System.out.println(WELCOME);
             System.out.println(ENCRYPT_FILE);
+            System.out.println(DECRYPT_FILE);
             System.out.println(EXIT);
             String operation = scanner.nextLine();
             isOperationValid = true;
             switch (operation) {
                 case "1":
-                    encryptFileDialog();
+                    encryptFileDialog(FILE_ENCRYPTED);
+                    break;
+                case "2":
+                    decryptFileDialog(FILE_DECRYPTED);
                     break;
                 case "0":
                     System.exit(0);
@@ -46,9 +52,12 @@ public class UserInterface {
         }
     }
 
-    private void encryptFileDialog() {
+    private void encryptFileDialog(String endMessage) {
         String fileNameForRead = inputFileForRead();
         int key = inputKey();
+        if (endMessage.equals(FILE_DECRYPTED)) {
+            key = -key;
+        }
         String fileNameForWrite = inputFileForWrite();
         try {
             encryptor.encryptFile(fileNameForRead, fileNameForWrite, key);
@@ -56,8 +65,12 @@ public class UserInterface {
             System.out.println(CANT_CREATE_FILE);
             exception.printStackTrace();
         }
-        System.out.println(FILE_ENCRYPTED);
+        System.out.println(endMessage);
         begin();
+    }
+
+    private void decryptFileDialog(String endMessage) {
+        encryptFileDialog(endMessage);
     }
 
     private String inputFileForRead() {
