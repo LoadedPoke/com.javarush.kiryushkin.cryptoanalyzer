@@ -10,6 +10,7 @@ public class UserInterface {
     private final String ENCRYPT_FILE = "1. Зашифровать файл";
     private final String DECRYPT_FILE = "2. Расшифровать файл";
     private final String ENCRYPT_STRING = "3. Зашифровать строку";
+    private final String DECRYPT_STRING = "4. Расшифровать строку";
     private final String EXIT = "0. Выход из программы";
     private final String WRONG_OPERATION = "Неверный номер операции. Попробуйте ещё раз.";
     private final String INPUT_FILE_NAME_FOR_READING = "Введите имя файла для чтения или \"0\" для выхода в меню:";
@@ -22,7 +23,7 @@ public class UserInterface {
     private final String CANT_CREATE_FILE = "Не удалось создать файл.";
     private final String FILE_ENCRYPTED = "Файл зашифрован.";
     private final String FILE_DECRYPTED = "Файл расшифрован";
-    private final String INPUT_STRING = "Введите строку кириллицей";
+    private final String INPUT_STRING = "Введите строку кириллицей:";
 
     Scanner scanner = new Scanner(System.in);
     Validator validator = new Validator();
@@ -35,6 +36,7 @@ public class UserInterface {
             System.out.println(ENCRYPT_FILE);
             System.out.println(DECRYPT_FILE);
             System.out.println(ENCRYPT_STRING);
+            System.out.println(DECRYPT_STRING);
             System.out.println(EXIT);
             String operation = scanner.nextLine();
             isOperationValid = true;
@@ -47,6 +49,9 @@ public class UserInterface {
                     break;
                 case "3":
                     encryptStringDialog();
+                    break;
+                case "4":
+                    decryptStringDialog();
                     break;
                 case "0":
                     System.exit(0);
@@ -84,6 +89,16 @@ public class UserInterface {
         String stringToEncrypt = scanner.nextLine();
         int key = inputKey();
         encryptor.encryptString(stringToEncrypt, key);
+        begin();
+    }
+
+    private void decryptStringDialog() {
+        System.out.println(INPUT_STRING);
+        String stringToEncrypt = scanner.nextLine();
+        int key = inputKey();
+        key = -key;
+        encryptor.encryptString(stringToEncrypt, key);
+        begin();
     }
 
     private String inputFileForRead() {
