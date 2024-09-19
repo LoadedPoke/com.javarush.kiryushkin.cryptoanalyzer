@@ -37,4 +37,18 @@ public class Encryptor {
         }
     }
 
+    public void encryptString(String stringToEncrypt, int key) {
+        StringBuilder encryptedString = new StringBuilder();
+        Cipher cipher = new Cipher(key);
+        Map<Character, Character> charMapping = cipher.getCharMapping();
+        stringToEncrypt = stringToEncrypt.toLowerCase();
+        for (int i = 0; i < stringToEncrypt.length(); i++) {
+            char symbol = stringToEncrypt.charAt(i);
+            if (charMapping.containsKey(symbol)) {
+                encryptedString.append(charMapping.get(symbol));
+            }
+        }
+        System.out.println(encryptedString);
+    }
+
 }
