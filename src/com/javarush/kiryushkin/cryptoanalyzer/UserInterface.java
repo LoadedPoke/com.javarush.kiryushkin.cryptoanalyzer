@@ -109,7 +109,7 @@ public class UserInterface {
         String stringToEncrypt = scanner.nextLine();
         int key = inputKey();
         key = -key;
-        encryptor.encryptString(stringToEncrypt, key);
+        System.out.println(encryptor.encryptString(stringToEncrypt, key));
         begin();
     }
 
@@ -123,6 +123,8 @@ public class UserInterface {
         } else {
             for (Map.Entry<Integer, String> variant : decryptedVariants.entrySet()) {
                 int key = variant.getKey();
+                String value = variant.getValue().substring(0, 200);
+                boolean isVariantFound = false;
                 if (decryptedVariants.entrySet().size() == 1) {
                     System.out.printf(ENCRYPTION_KEY, key);
                     try {
@@ -134,7 +136,7 @@ public class UserInterface {
                     System.out.println(FILE_DECRYPTED);
                 } else {
                     System.out.println(CAN_RECOGNIZE_TEXT);
-                    System.out.println(variant.getValue().substring(0, 200));
+                    System.out.println(value);
                     boolean isAnswerValid = false;
                     while (!isAnswerValid) {
                         isAnswerValid = true;
@@ -154,11 +156,15 @@ public class UserInterface {
                                     exception.printStackTrace();
                                 }
                                 System.out.println(FILE_DECRYPTED);
+                                isVariantFound = true;
                                 break;
                             default:
                                 isAnswerValid = false;
                         }
                     }
+                }
+                if (isVariantFound) {
+                break;
                 }
             }
         }
@@ -258,7 +264,7 @@ public class UserInterface {
         try (BufferedReader bufferedReader = new BufferedReader(
                 new FileReader(filename))) {
             int charAsInt;
-            while ((charAsInt = bufferedReader.read()) != -1 || stringBuilder.length() < 1000) {
+            while ((charAsInt = bufferedReader.read()) != -1 && stringBuilder.length() < 1000) {
                 stringBuilder.append((char) charAsInt);
             }
         } catch (FileNotFoundException exception) {
