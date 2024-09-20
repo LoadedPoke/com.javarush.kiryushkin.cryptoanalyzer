@@ -11,7 +11,7 @@ public class Cipher {
             '.', ',', '«', '»', '"', '\'', '/', ':', '!', '?', ' ',
             '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
 
-    private Map<Character, Character> charMapping;
+    private final Map<Character, Character> charMapping;
 
     public Cipher(int key) {
         this.charMapping = createCharMapping(ALPHABET, key);

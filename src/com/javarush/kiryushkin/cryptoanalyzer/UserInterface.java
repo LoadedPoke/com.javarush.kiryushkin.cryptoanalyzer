@@ -1,7 +1,11 @@
 package com.javarush.kiryushkin.cryptoanalyzer;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.Map;
 import java.util.Scanner;
 
 public class UserInterface {
@@ -11,6 +15,7 @@ public class UserInterface {
     private final String DECRYPT_FILE = "2. Расшифровать файл";
     private final String ENCRYPT_STRING = "3. Зашифровать строку";
     private final String DECRYPT_STRING = "4. Расшифровать строку";
+    private final String DECRYPT_FILE_BRUTEFORCE = "5. Расшифровать файл с помощью Brute Force";
     private final String EXIT = "0. Выход из программы";
     private final String WRONG_OPERATION = "Неверный номер операции. Попробуйте ещё раз.";
     private final String INPUT_FILE_NAME_FOR_READING = "Введите имя файла для чтения или \"0\" для выхода в меню:";
@@ -24,6 +29,10 @@ public class UserInterface {
     private final String FILE_ENCRYPTED = "Файл зашифрован.";
     private final String FILE_DECRYPTED = "Файл расшифрован";
     private final String INPUT_STRING = "Введите строку кириллицей:";
+    private final String CANT_READ_FROM_FILE = "Не удалось прочитать файл.";
+    private final String CANT_DECRYPT_FILE = "Файл расшифровать не удалось.";
+    private final String ENCRYPTION_KEY = "Ключ шифрования \"%d\".\n";
+    private final String CAN_RECOGNIZE_TEXT = "Вы можете распознать текст? y/n.";
 
     Scanner scanner = new Scanner(System.in);
     Validator validator = new Validator();
@@ -37,6 +46,7 @@ public class UserInterface {
             System.out.println(DECRYPT_FILE);
             System.out.println(ENCRYPT_STRING);
             System.out.println(DECRYPT_STRING);
+            System.out.println(DECRYPT_FILE_BRUTEFORCE);
             System.out.println(EXIT);
             String operation = scanner.nextLine();
             isOperationValid = true;
@@ -53,6 +63,8 @@ public class UserInterface {
                 case "4":
                     decryptStringDialog();
                     break;
+                case "5":
+                    decryptFileBruteForceDialog();
                 case "0":
                     System.exit(0);
                     break;
@@ -88,7 +100,7 @@ public class UserInterface {
         System.out.println(INPUT_STRING);
         String stringToEncrypt = scanner.nextLine();
         int key = inputKey();
-        encryptor.encryptString(stringToEncrypt, key);
+        System.out.println(encryptor.encryptString(stringToEncrypt, key));
         begin();
     }
 
@@ -98,6 +110,58 @@ public class UserInterface {
         int key = inputKey();
         key = -key;
         encryptor.encryptString(stringToEncrypt, key);
+        begin();
+    }
+
+    private void decryptFileBruteForceDialog() {
+        String fileNameForRead = inputFileForRead();
+        String fileNameForWrite = inputFileForWrite();
+        String shortString = takeStringFromFile(fileNameForRead);
+        Map<Integer, String> decryptedVariants = encryptor.decryptStringBruteForce(shortString);
+        if (decryptedVariants.isEmpty()) {
+            System.out.println(CANT_DECRYPT_FILE);
+        } else {
+            for (Map.Entry<Integer, String> variant : decryptedVariants.entrySet()) {
+                int key = variant.getKey();
+                if (decryptedVariants.entrySet().size() == 1) {
+                    System.out.printf(ENCRYPTION_KEY, key);
+                    try {
+                        encryptor.encryptFile(fileNameForRead, fileNameForWrite, -key);
+                    } catch (IOException exception) {
+                        System.out.println(CANT_CREATE_FILE);
+                        exception.printStackTrace();
+                    }
+                    System.out.println(FILE_DECRYPTED);
+                } else {
+                    System.out.println(CAN_RECOGNIZE_TEXT);
+                    System.out.println(variant.getValue().substring(0, 200));
+                    boolean isAnswerValid = false;
+                    while (!isAnswerValid) {
+                        isAnswerValid = true;
+                        String answer = scanner.nextLine();
+                        answer = answer.toLowerCase();
+                        switch (answer) {
+                            case "n":
+                            case "н":
+                                break;
+                            case "y":
+                            case "д":
+                                System.out.printf(ENCRYPTION_KEY, key);
+                                try {
+                                    encryptor.encryptFile(fileNameForRead, fileNameForWrite, -key);
+                                } catch (IOException exception) {
+                                    System.out.println(CANT_CREATE_FILE);
+                                    exception.printStackTrace();
+                                }
+                                System.out.println(FILE_DECRYPTED);
+                                break;
+                            default:
+                                isAnswerValid = false;
+                        }
+                    }
+                }
+            }
+        }
         begin();
     }
 
@@ -188,4 +252,23 @@ public class UserInterface {
         }
         return key;
     }
+
+    private String takeStringFromFile(String filename) {
+        StringBuilder stringBuilder = new StringBuilder();
+        try (BufferedReader bufferedReader = new BufferedReader(
+                new FileReader(filename))) {
+            int charAsInt;
+            while ((charAsInt = bufferedReader.read()) != -1 || stringBuilder.length() < 1000) {
+                stringBuilder.append((char) charAsInt);
+            }
+        } catch (FileNotFoundException exception) {
+            System.out.println(WRONG_FILE_NAME);
+            exception.printStackTrace();
+        } catch (IOException exception) {
+            System.out.println(CANT_READ_FROM_FILE);
+            exception.printStackTrace();
+        }
+        return stringBuilder.toString();
+    }
+
 }

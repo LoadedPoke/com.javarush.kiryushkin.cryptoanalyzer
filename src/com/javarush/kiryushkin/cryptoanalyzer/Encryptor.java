@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Encryptor {
@@ -37,7 +38,7 @@ public class Encryptor {
         }
     }
 
-    public void encryptString(String stringToEncrypt, int key) {
+    public String encryptString(String stringToEncrypt, int key) {
         StringBuilder encryptedString = new StringBuilder();
         Cipher cipher = new Cipher(key);
         Map<Character, Character> charMapping = cipher.getCharMapping();
@@ -48,7 +49,20 @@ public class Encryptor {
                 encryptedString.append(charMapping.get(symbol));
             }
         }
-        System.out.println(encryptedString);
+        return encryptedString.toString();
+    }
+
+    public Map<Integer, String> decryptStringBruteForce(String shortString) {
+        Map<Integer, String> decryptedVariants = new HashMap<>();
+        Cipher cipher = new Cipher(0);
+        int possibleVariants = cipher.getCharMapping().size();
+        for (int i = 1; i <= possibleVariants; i++) {
+            String variant = encryptString(shortString, -i);
+            if (variant.contains(", ") && variant.contains(". ")) {
+                decryptedVariants.put(i, variant);
+            }
+        }
+        return decryptedVariants;
     }
 
 }
